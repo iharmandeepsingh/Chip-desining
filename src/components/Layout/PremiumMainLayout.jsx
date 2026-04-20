@@ -9,12 +9,59 @@ const PremiumMainLayout = () => {
   const { currentTheme, toggleTheme, isDark } = useTheme();
   const [isLeftCollapsed, setIsLeftCollapsed] = useState(false);
   const [isBottomCollapsed, setIsBottomCollapsed] = useState(false);
+  const [rotation, setRotation] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [panelPosition, setPanelPosition] = useState({ x: '50%', y: '20px' });
+
+  // Drag functionality
+  const handleDragStart = (e) => {
+    setIsDragging(true);
+    const currentX = typeof panelPosition.x === 'string' ? parseFloat(panelPosition.x) : panelPosition.x;
+    const currentY = typeof panelPosition.y === 'string' ? parseFloat(panelPosition.y) : panelPosition.y;
+    setDragStart({
+      x: e.clientX - (currentX * window.innerWidth / 100),
+      y: e.clientY - (window.innerHeight - currentY)
+    });
+  };
+
+  const handleDragMove = (e) => {
+    if (!isDragging) return;
+    
+    const newX = ((e.clientX - dragStart.x) / window.innerWidth * 100);
+    const newY = window.innerHeight - (e.clientY - dragStart.y);
+    
+    setPanelPosition({
+      x: Math.max(10, Math.min(90, newX)) + '%',
+      y: Math.max(10, Math.min(90, newY)) + 'px'
+    });
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Global mouse event listeners
+  React.useEffect(() => {
+    const handleMouseMove = (e) => handleDragMove(e);
+    const handleMouseUp = () => handleDragEnd();
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, dragStart]);
 
   return (
     <div
       style={{
         height: '100vh',
-        width: '85%',
+        width: '100vw',
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: currentTheme.background,
@@ -26,10 +73,16 @@ const PremiumMainLayout = () => {
         lineHeight: '1.5',
         letterSpacing: '-0.01em',
         fontFeatureSettings: '"cv02", "cv03", "cv04", "cv11"',
+        margin: '0',
+        padding: '0',
+        left: '0',
+        top: '0',
       }}
     >
       {/* Top Toolbar */}
-      <PremiumTopToolbar />
+      <div style={{ position: 'relative', zIndex: 100 }}>
+        <PremiumTopToolbar />
+      </div>
 
       {/* Main Content Area */}
       <div
@@ -187,201 +240,101 @@ const PremiumMainLayout = () => {
       </div>
 
       {/* Bottom Panel */}
-      <PremiumBottomPanel />
-
-      {/* Global Styles for Animations */}
-      <style>
-        {`
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
+      <div
+        id="bottom-panel-container"
+        style={{
+          position: 'absolute',
+          bottom: panelPosition.y,
+          left: panelPosition.x,
+          transform: 'translateX(-50%) rotate(' + rotation + 'deg)',
+          zIndex: 100,
+          cursor: isDragging ? 'grabbing' : 'grab',
+          userSelect: 'none',
+          transition: isDragging ? 'none' : 'transform 0.3s ease',
+        }}
+        onMouseDown={(e) => handleDragStart(e)}
+      >
+          {/* Rotation Controls */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-30px',
+              right: '-30px',
+              display: 'flex',
+              gap: '4px',
+              zIndex: 101,
+            }}
+          >
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setRotation(prev => prev - 15);
+              }}
+              style={{
+                width: '24px',
+                height: '24px',
+                backgroundColor: currentTheme.primary,
+                border: 'none',
+                borderRadius: '50%',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              ↺
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setRotation(prev => prev + 15);
+              }}
+              style={{
+                width: '24px',
+                height: '24px',
+                backgroundColor: currentTheme.primary,
+                border: 'none',
+                borderRadius: '50%',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              ↻
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setRotation(0);
+              }}
+              style={{
+                width: '24px',
+                height: '24px',
+                backgroundColor: currentTheme.secondary,
+                border: 'none',
+                borderRadius: '4px',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '10px',
+                fontWeight: '600',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              0°
+            </button>
+          </div>
           
-          @keyframes slideInLeft {
-            from {
-              opacity: 0;
-              transform: translateX(-20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateX(0);
-            }
-          }
-          
-          @keyframes slideInRight {
-            from {
-              opacity: 0;
-              transform: translateX(20px);
-            }
-            to {
-              opacity: 1;
-              transform: translateX(0);
-            }
-          }
-          
-          @keyframes pulse {
-            0%, 100% {
-              opacity: 1;
-            }
-            50% {
-              opacity: 0.7;
-            }
-          }
-          
-          @keyframes glow {
-            0%, 100% {
-              box-shadow: 0 0 5px ${currentTheme.primary}40;
-            }
-            50% {
-              box-shadow: 0 0 20px ${currentTheme.primary}60;
-            }
-          }
-          
-          * {
-            box-sizing: border-box;
-          }
-          
-          body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: ${currentTheme.background};
-            color: ${currentTheme.text.primary};
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          }
-          
-          /* Consistent spacing system */
-          .spacing-xs { margin: 4px; }
-          .spacing-sm { margin: 8px; }
-          .spacing-md { margin: 16px; }
-          .spacing-lg { margin: 24px; }
-          .spacing-xl { margin: 32px; }
-          
-          .padding-xs { padding: 4px; }
-          .padding-sm { padding: 8px; }
-          .padding-md { padding: 16px; }
-          .padding-lg { padding: 24px; }
-          .padding-xl { padding: 32px; }
-          
-          .gap-xs { gap: 4px; }
-          .gap-sm { gap: 8px; }
-          .gap-md { gap: 16px; }
-          .gap-lg { gap: 24px; }
-          .gap-xl { gap: 32px; }
-          
-          /* Scrollbar styling */
-          ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-          }
-          
-          ::-webkit-scrollbar-track {
-            background: ${currentTheme.scrollbar.track};
-            border-radius: 4px;
-          }
-          
-          ::-webkit-scrollbar-thumb {
-            background: ${currentTheme.scrollbar.thumb};
-            border-radius: 4px;
-            transition: background 0.2s ease;
-          }
-          
-          ::-webkit-scrollbar-thumb:hover {
-            background: ${currentTheme.scrollbar.thumbHover};
-          }
-          
-          /* React Flow improvements */
-          .react-flow__node {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: move;
-          }
-          
-          .react-flow__node:hover {
-            transform: scale(1.02);
-            filter: brightness(1.1);
-          }
-          
-          .react-flow__node.selected {
-            box-shadow: 0 0 0 2px ${currentTheme.primary};
-          }
-          
-          .react-flow__edge-path {
-            transition: all 0.3s ease;
-          }
-          
-          .react-flow__edge:hover .react-flow__edge-path {
-            stroke-width: 3;
-            filter: brightness(1.2);
-          }
-          
-          .react-flow__controls {
-            background: ${currentTheme.surface} !important;
-            border: 1px solid ${currentTheme.border} !important;
-            border-radius: 12px !important;
-            box-shadow: ${currentTheme.shadow.md} !important;
-            backdrop-filter: blur(8px) !important;
-          }
-          
-          .react-flow__controls-button {
-            background: transparent !important;
-            border: none !important;
-            color: ${currentTheme.text.secondary} !important;
-            transition: all 0.2s ease !important;
-            border-radius: 8px !important;
-            margin: 2px !important;
-          }
-          
-          .react-flow__controls-button:hover {
-            background: ${currentTheme.primaryHover} !important;
-            color: ${currentTheme.text.inverse} !important;
-            transform: scale(1.05) !important;
-          }
-          
-          .react-flow__minimap {
-            background: ${currentTheme.surface} !important;
-            border: 1px solid ${currentTheme.border} !important;
-            border-radius: 8px !important;
-          }
-          
-          .react-flow__background {
-            background: ${currentTheme.canvas} !important;
-          }
-          
-          /* Selection box */
-          .react-flow__selection {
-            background: ${currentTheme.primary}20 !important;
-            border: 1px solid ${currentTheme.primary} !important;
-          }
-          
-          /* Attributions */
-          .react-flow__attribution {
-            background: transparent !important;
-            color: ${currentTheme.text.tertiary} !important;
-            font-size: 10px !important;
-          }
-          
-          /* Focus styles */
-          button:focus-visible,
-          [tabindex]:focus-visible {
-            outline: 2px solid ${currentTheme.primary};
-            outline-offset: 2px;
-          }
-          
-          /* Text selection */
-          ::selection {
-            background: ${currentTheme.primary}40;
-            color: ${currentTheme.text.primary};
-          }
-        `}
-      </style>
-    </div>
+          <PremiumBottomPanel />
+        </div>
+      </div>
+   
   );
-};
-
+}
 export default PremiumMainLayout;

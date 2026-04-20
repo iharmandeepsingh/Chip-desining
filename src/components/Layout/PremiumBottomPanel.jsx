@@ -9,6 +9,8 @@ const PremiumBottomPanel = () => {
   const { nodes, edges, setNodes, propagateValues } = useCircuitStore();
   const [activeTab, setActiveTab] = useState('simulation');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const tabs = [
     { id: 'simulation', label: 'Simulation', icon: 'S', description: 'Run and analyze circuits' },
@@ -382,94 +384,265 @@ const PremiumBottomPanel = () => {
   return (
     <div
       style={{
-        height: isCollapsed ? '64px' : '320px',
-        background: `linear-gradient(180deg, ${currentTheme.surface}, ${currentTheme.surfaceHover})`,
-        borderTop: `3px solid ${currentTheme.primary}40`,
+        height: isMaximized ? 'calc(100vh - 120px)' : isCollapsed ? '64px' : '380px',
+        background: `linear-gradient(180deg, ${currentTheme.surface}, ${currentTheme.surfaceHover}20)`,
+        borderTop: `3px solid transparent`,
+        borderImage: `linear-gradient(90deg, ${currentTheme.primary}, ${currentTheme.secondary}, ${currentTheme.accent}) 1`,
         borderLeft: `1px solid ${currentTheme.border}30`,
         borderRight: `1px solid ${currentTheme.border}30`,
         transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        boxShadow: `0 -8px 32px ${currentTheme.shadow.xl}, inset 0 1px 0 rgba(255,255,255,0.1)`,
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
+        boxShadow: `0 -8px 32px ${currentTheme.shadow.xl}, inset 0 1px 0 rgba(255,255,255,0.1), 0 0 60px ${currentTheme.primary}10`,
+        backdropFilter: 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
         overflow: 'hidden',
+        zIndex: isMaximized ? 1000 : 100,
       }}
     >
-      {/* Classical Header */}
+      {/* Premium Header */}
       <div
         style={{
-          height: '56px',
-          background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`,
+          height: '64px',
+          background: `linear-gradient(135deg, ${currentTheme.primary}20, ${currentTheme.secondary}20, ${currentTheme.accent}20)`,
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 20px',
+          padding: '0 24px',
           position: 'relative',
           overflow: 'hidden',
+          borderBottom: `1px solid ${currentTheme.border}40`,
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Animated Background */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: `linear-gradient(90deg, transparent, ${currentTheme.primary}10, transparent)`,
+            animation: 'shimmer 3s infinite',
+          }}
+        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative', zIndex: 1 }}>
           <div
             style={{
-              width: '32px',
-              height: '32px',
-              background: 'rgba(255,255,255,0.2)',
-              borderRadius: '8px',
+              width: '40px',
+              height: '40px',
+              background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`,
+              borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '16px',
+              fontSize: '20px',
               fontWeight: '700',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              boxShadow: `0 4px 16px ${currentTheme.primary}40`,
+              border: `2px solid rgba(255,255,255,0.2)`,
             }}
           >
-            🎭
+            ⚡
           </div>
           <div>
-            <div style={{ fontSize: '16px', fontWeight: '700', color: 'white' }}>Classical Console</div>
-            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>Premium Simulation & Analysis</div>
+            <div style={{ fontSize: '18px', fontWeight: '700', color: currentTheme.text.primary, textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>Premium Console</div>
+            <div style={{ fontSize: '11px', color: currentTheme.text.secondary, letterSpacing: '0.02em' }}>Advanced Circuit Analysis Suite</div>
           </div>
         </div>
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          style={{
-            width: '32px',
-            height: '32px',
-            background: 'rgba(255,255,255,0.2)',
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '14px',
-            color: 'white',
-            transition: 'all 0.2s',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.background = 'rgba(255,255,255,0.3)';
-            e.target.style.transform = 'scale(1.1)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.background = 'rgba(255,255,255,0.2)';
-            e.target.style.transform = 'scale(1)';
-          }}
-        >
-          {isCollapsed ? '↑' : '↓'}
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', position: 'relative', zIndex: 1 }}>
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            style={{
+              width: '32px',
+              height: '32px',
+              background: showAdvanced ? `linear-gradient(135deg, ${currentTheme.accent}, ${currentTheme.accentHover})` : `${currentTheme.surface}80`,
+              border: `2px solid ${showAdvanced ? currentTheme.accent : currentTheme.border}60`,
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              color: showAdvanced ? 'white' : currentTheme.text.secondary,
+              transition: 'all 0.2s',
+              boxShadow: showAdvanced ? `0 2px 8px ${currentTheme.accent}40` : `0 2px 8px ${currentTheme.shadow.sm}`,
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'scale(1.1)';
+              e.target.style.boxShadow = showAdvanced ? `0 4px 16px ${currentTheme.accent}60` : `0 4px 16px ${currentTheme.shadow.md}`;
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'scale(1)';
+              e.target.style.boxShadow = showAdvanced ? `0 2px 8px ${currentTheme.accent}40` : `0 2px 8px ${currentTheme.shadow.sm}`;
+            }}
+          >
+            ⚙
+          </button>
+          <button
+            onClick={() => setIsMaximized(!isMaximized)}
+            style={{
+              width: '32px',
+              height: '32px',
+              background: isMaximized ? `linear-gradient(135deg, ${currentTheme.secondary}, ${currentTheme.secondaryHover})` : `${currentTheme.surface}80`,
+              border: `2px solid ${isMaximized ? currentTheme.secondary : currentTheme.border}60`,
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              color: isMaximized ? 'white' : currentTheme.text.secondary,
+              transition: 'all 0.2s',
+              boxShadow: isMaximized ? `0 2px 8px ${currentTheme.secondary}40` : `0 2px 8px ${currentTheme.shadow.sm}`,
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'scale(1.1)';
+              e.target.style.boxShadow = isMaximized ? `0 4px 16px ${currentTheme.secondary}60` : `0 4px 16px ${currentTheme.shadow.md}`;
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'scale(1)';
+              e.target.style.boxShadow = isMaximized ? `0 2px 8px ${currentTheme.secondary}40` : `0 2px 8px ${currentTheme.shadow.sm}`;
+            }}
+          >
+            {isMaximized ? '⛶' : '⛶'}
+          </button>
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            style={{
+              width: '32px',
+              height: '32px',
+              background: `${currentTheme.surface}80`,
+              border: `2px solid ${currentTheme.border}60`,
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '14px',
+              color: currentTheme.text.secondary,
+              transition: 'all 0.2s',
+              boxShadow: `0 2px 8px ${currentTheme.shadow.sm}`,
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = `${currentTheme.primary}20`;
+              e.target.style.transform = 'scale(1.1)';
+              e.target.style.borderColor = currentTheme.primary;
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = `${currentTheme.surface}80`;
+              e.target.style.transform = 'scale(1)';
+              e.target.style.borderColor = `${currentTheme.border}60`;
+            }}
+          >
+            {isCollapsed ? '↑' : '↓'}
+          </button>
+        </div>
       </div>
 
-      {/* Classical Tab Navigation */}
+      {/* Advanced Settings Panel */}
+      {showAdvanced && !isCollapsed && (
+        <div
+          style={{
+            padding: '16px 24px',
+            background: `${currentTheme.accent}10`,
+            borderBottom: `2px solid ${currentTheme.accent}30`,
+            display: 'flex',
+            gap: '24px',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ 
+              fontSize: '12px', 
+              fontWeight: '600', 
+              color: currentTheme.text.secondary,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Simulation Speed:
+            </span>
+            <select
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: `2px solid ${currentTheme.accent}40`,
+                background: currentTheme.surface,
+                color: currentTheme.text.primary,
+                fontSize: '12px',
+                fontWeight: '500',
+                cursor: 'pointer',
+              }}
+            >
+              <option>Slow</option>
+              <option selected>Normal</option>
+              <option>Fast</option>
+              <option>Instant</option>
+            </select>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ 
+              fontSize: '12px', 
+              fontWeight: '600', 
+              color: currentTheme.text.secondary,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em'
+            }}>
+              Analysis Mode:
+            </span>
+            <select
+              style={{
+                padding: '6px 12px',
+                borderRadius: '6px',
+                border: `2px solid ${currentTheme.accent}40`,
+                background: currentTheme.surface,
+                color: currentTheme.text.primary,
+                fontSize: '12px',
+                fontWeight: '500',
+                cursor: 'pointer',
+              }}
+            >
+              <option selected>Standard</option>
+              <option>Advanced</option>
+              <option>Debug</option>
+            </select>
+          </div>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <input
+              type="checkbox"
+              id="auto-run"
+              style={{
+                width: '16px',
+                height: '16px',
+                accentColor: currentTheme.accent,
+              }}
+            />
+            <label 
+              htmlFor="auto-run"
+              style={{ 
+                fontSize: '12px', 
+                fontWeight: '500', 
+                color: currentTheme.text.secondary,
+                cursor: 'pointer',
+              }}
+            >
+              Auto-run on changes
+            </label>
+          </div>
+        </div>
+      )}
       {!isCollapsed && (
         <div
           style={{
             display: 'flex',
             borderBottom: `2px solid ${currentTheme.primary}20`,
-            padding: '12px 20px',
-            gap: '8px',
+            padding: '6px 12px',
+            gap: '4px',
             background: `${currentTheme.surface}50`,
           }}
         >
@@ -479,7 +652,7 @@ const PremiumBottomPanel = () => {
               onClick={() => setActiveTab(tab.id)}
               style={{
                 flex: 1,
-                height: '40px',
+                height: '32px',
                 background: activeTab === tab.id 
                   ? `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.primaryHover})`
                   : 'transparent',
@@ -487,21 +660,21 @@ const PremiumBottomPanel = () => {
                 border: activeTab === tab.id 
                   ? `2px solid ${currentTheme.primary}60` 
                   : `2px solid ${currentTheme.border}40`,
-                borderRadius: '12px',
+                borderRadius: '8px',
                 cursor: 'pointer',
-                fontSize: '12px',
+                fontSize: '10px',
                 fontWeight: '700',
                 transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '4px',
+                gap: '2px',
                 position: 'relative',
                 overflow: 'hidden',
                 boxShadow: activeTab === tab.id 
-                  ? `0 4px 16px ${currentTheme.primary}40, inset 0 1px 0 rgba(255,255,255,0.2)`
-                  : `0 2px 8px ${currentTheme.shadow.sm}`,
+                  ? `0 2px 8px ${currentTheme.primary}40, inset 0 1px 0 rgba(255,255,255,0.2)`
+                  : `0 1px 4px ${currentTheme.shadow.sm}`,
               }}
               onMouseEnter={(e) => {
                 if (activeTab !== tab.id) {
@@ -556,7 +729,6 @@ const PremiumBottomPanel = () => {
         </div>
       )}
 
-      {/* Classical Content Area */}
       {!isCollapsed && (
         <div
           style={{
@@ -607,6 +779,9 @@ const PremiumBottomPanel = () => {
                 border: `2px solid ${currentTheme.primary}30`,
                 borderRadius: '12px',
                 padding: '12px',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                overflowX: 'hidden',
               }}>
                 <div style={{ 
                   display: 'grid', 
