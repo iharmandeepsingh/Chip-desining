@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useCircuitStore from '../store/useCircuitStore';
 
 const CircuitTemplates = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const { addNode, addEdge, clearCircuit } = useCircuitStore();
 
   const templates = [
@@ -384,103 +383,102 @@ const CircuitTemplates = () => {
     }
   ];
 
-  if (!isOpen) {
-    return (
-      <button
-        onClick={() => setIsOpen(true)}
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          left: '20px',
-          padding: '12px 20px',
-          backgroundColor: '#9C27B0',
-          color: 'white',
-          border: 'none',
-          borderRadius: '8px',
-          cursor: 'pointer',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
-          zIndex: 1000,
-        }}
-      >
-        📚 Circuit Templates
-      </button>
-    );
-  }
-
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        backgroundColor: 'white',
-        padding: '30px',
-        borderRadius: '12px',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-        zIndex: 1000,
-        maxHeight: '80vh',
-        overflow: 'auto',
-        minWidth: '500px',
-      }}
-    >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ margin: 0, color: '#333' }}>Circuit Templates</h2>
-        <button
-          onClick={() => setIsOpen(false)}
-          style={{
-            backgroundColor: '#f44336',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            padding: '6px 12px',
-            cursor: 'pointer',
-          }}
-        >
-          Close
-        </button>
+    <div style={{ 
+      width: '100%', 
+      height: '100%', 
+      backgroundColor: 'transparent',
+      padding: '0px',
+      boxSizing: 'border-box'
+    }}>
+      <div style={{ 
+        fontSize: '12px', 
+        fontWeight: '700', 
+        color: '#f8fafc',
+        marginBottom: '8px',
+        textAlign: 'center'
+      }}>
+        Circuit Templates
       </div>
-
-      <div style={{ display: 'grid', gap: '15px' }}>
+      
+      {/* Templates container */}
+      <div style={{ 
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '6px',
+        maxHeight: '300px',
+        overflow: 'auto'
+      }}>
         {templates.map((template, index) => (
-          <div
+          <button
             key={index}
-            style={{
-              padding: '15px',
-              border: '2px solid #e0e0e0',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              backgroundColor: '#fafafa',
-            }}
             onClick={() => {
               template.create();
-              setIsOpen(false);
+            }}
+            style={{
+              padding: '8px',
+              backgroundColor: '#1e293b',
+              border: '1px solid #334155',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '9px',
+              fontWeight: '600',
+              color: '#f8fafc',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              transition: 'all 0.2s ease',
+              textAlign: 'left',
+              minHeight: '40px'
             }}
             onMouseEnter={(e) => {
-              e.target.style.backgroundColor = '#e3f2fd';
-              e.target.style.borderColor = '#2196F3';
+              e.target.style.backgroundColor = '#334155';
+              e.target.style.borderColor = '#475569';
+              e.target.style.transform = 'translateX(2px)';
             }}
             onMouseLeave={(e) => {
-              e.target.style.backgroundColor = '#fafafa';
-              e.target.style.borderColor = '#e0e0e0';
+              e.target.style.backgroundColor = '#1e293b';
+              e.target.style.borderColor = '#334155';
+              e.target.style.transform = 'translateX(0)';
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '24px', marginRight: '10px' }}>{template.icon}</span>
-              <h3 style={{ margin: 0, color: '#333' }}>{template.name}</h3>
+            <span style={{ 
+              fontSize: '14px', 
+              minWidth: '16px',
+              textAlign: 'center'
+            }}>
+              {template.icon}
+            </span>
+            <div style={{ flex: 1 }}>
+              <div style={{ 
+                fontSize: '10px', 
+                fontWeight: '700', 
+                marginBottom: '2px',
+                lineHeight: '1.2'
+              }}>
+                {template.name}
+              </div>
+              <div style={{ 
+                fontSize: '8px', 
+                color: '#94a3b8',
+                lineHeight: '1.2',
+                opacity: 0.9
+              }}>
+                {template.description}
+              </div>
             </div>
-            <p style={{ margin: 0, color: '#666', fontSize: '14px' }}>
-              {template.description}
-            </p>
-          </div>
+          </button>
         ))}
       </div>
-
-      <div style={{ marginTop: '20px', fontSize: '12px', color: '#666', textAlign: 'center' }}>
-        Click any template to load it. This will replace your current circuit.
+      
+      <div style={{ 
+        marginTop: '8px', 
+        fontSize: '8px', 
+        color: '#64748b', 
+        textAlign: 'center',
+        lineHeight: '1.3'
+      }}>
+        Click any template to load. This will replace your current circuit.
       </div>
     </div>
   );

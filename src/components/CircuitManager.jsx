@@ -107,90 +107,164 @@ const CircuitManager = () => {
   };
 
   return (
-    <div style={{ position: 'fixed', top: '20px', left: '20px', zIndex: 1000 }}>
-      <div style={{ display: 'flex', gap: '8px', flexDirection: 'column', alignItems: 'flex-start' }}>
+    <div style={{ 
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'transparent',
+      padding: '0px',
+      boxSizing: 'border-box'
+    }}>
+      <div style={{ 
+        fontSize: '12px', 
+        fontWeight: '700', 
+        color: '#f8fafc',
+        marginBottom: '8px',
+        textAlign: 'center'
+      }}>
+        File Operations
+      </div>
+      
+      {/* Button container with absolute positioning */}
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        height: '350px'
+      }}>
+        {/* Row 1 */}
         <button
           onClick={saveCircuit}
           disabled={nodes.length === 0}
           style={{
-            padding: '8px 12px',
-            backgroundColor: nodes.length > 0 ? '#4CAF50' : '#ccc',
+            position: 'absolute',
+            top: '0px',
+            left: '0px',
+            width: '100px',
+            height: '50px',
+            backgroundColor: nodes.length > 0 ? '#22c55e' : '#374151',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '6px',
             cursor: nodes.length > 0 ? 'pointer' : 'not-allowed',
-            fontSize: '12px',
-            fontWeight: 'bold',
+            fontSize: '10px',
+            fontWeight: '600',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px'
           }}
         >
-          Save Circuit
+          <div style={{ fontSize: '12px', fontWeight: '700' }}>Save</div>
+          <div style={{ fontSize: '8px', opacity: 0.8 }}>Circuit</div>
         </button>
 
         <button
           onClick={() => setShowSaved(!showSaved)}
           disabled={savedCircuits.length === 0}
           style={{
-            padding: '8px 12px',
-            backgroundColor: savedCircuits.length > 0 ? '#2196F3' : '#ccc',
+            position: 'absolute',
+            top: '0px',
+            left: '105px',
+            width: '100px',
+            height: '50px',
+            backgroundColor: savedCircuits.length > 0 ? '#3b82f6' : '#374151',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '6px',
             cursor: savedCircuits.length > 0 ? 'pointer' : 'not-allowed',
-            fontSize: '12px',
-            fontWeight: 'bold',
+            fontSize: '10px',
+            fontWeight: '600',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px'
           }}
         >
-          Load Circuit ({savedCircuits.length})
+          <div style={{ fontSize: '12px', fontWeight: '700' }}>Load</div>
+          <div style={{ fontSize: '8px', opacity: 0.8 }}>({savedCircuits.length})</div>
         </button>
 
+        {/* Row 2 */}
         <button
           onClick={exportCircuit}
           disabled={nodes.length === 0}
           style={{
-            padding: '8px 12px',
-            backgroundColor: nodes.length > 0 ? '#FF9800' : '#ccc',
+            position: 'absolute',
+            top: '55px',
+            left: '0px',
+            width: '100px',
+            height: '50px',
+            backgroundColor: nodes.length > 0 ? '#f97316' : '#374151',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '6px',
             cursor: nodes.length > 0 ? 'pointer' : 'not-allowed',
-            fontSize: '12px',
-            fontWeight: 'bold',
+            fontSize: '10px',
+            fontWeight: '600',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px'
           }}
         >
-          Export
+          <div style={{ fontSize: '12px', fontWeight: '700' }}>Export</div>
+          <div style={{ fontSize: '8px', opacity: 0.8 }}>JSON</div>
         </button>
 
         <button
           onClick={() => downloadVerilog(nodes, edges)}
           disabled={nodes.length === 0}
           style={{
-            padding: '8px 12px',
-            backgroundColor: nodes.length > 0 ? '#607D8B' : '#ccc',
+            position: 'absolute',
+            top: '55px',
+            left: '105px',
+            width: '100px',
+            height: '50px',
+            backgroundColor: nodes.length > 0 ? '#6366f1' : '#374151',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '6px',
             cursor: nodes.length > 0 ? 'pointer' : 'not-allowed',
-            fontSize: '12px',
-            fontWeight: 'bold',
+            fontSize: '10px',
+            fontWeight: '600',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px'
           }}
         >
-          Export Verilog
+          <div style={{ fontSize: '12px', fontWeight: '700' }}>Export</div>
+          <div style={{ fontSize: '8px', opacity: 0.8 }}>Verilog</div>
         </button>
 
+        {/* Row 3 */}
         <button
           onClick={importCircuit}
           style={{
-            padding: '8px 12px',
-            backgroundColor: '#9C27B0',
+            position: 'absolute',
+            top: '110px',
+            left: '0px',
+            width: '100px',
+            height: '50px',
+            backgroundColor: '#a855f7',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '6px',
             cursor: 'pointer',
-            fontSize: '12px',
-            fontWeight: 'bold',
+            fontSize: '10px',
+            fontWeight: '600',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px'
           }}
         >
-          Import
+          <div style={{ fontSize: '12px', fontWeight: '700' }}>Import</div>
+          <div style={{ fontSize: '8px', opacity: 0.8 }}>File</div>
         </button>
 
         <button
@@ -201,75 +275,92 @@ const CircuitManager = () => {
           }}
           disabled={nodes.length === 0}
           style={{
-            padding: '8px 12px',
-            backgroundColor: nodes.length > 0 ? '#f44336' : '#ccc',
+            position: 'absolute',
+            top: '110px',
+            left: '105px',
+            width: '100px',
+            height: '50px',
+            backgroundColor: nodes.length > 0 ? '#ef4444' : '#374151',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
+            borderRadius: '6px',
             cursor: nodes.length > 0 ? 'pointer' : 'not-allowed',
-            fontSize: '12px',
-            fontWeight: 'bold',
+            fontSize: '10px',
+            fontWeight: '600',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '2px'
           }}
         >
-          Clear All
+          <div style={{ fontSize: '12px', fontWeight: '700' }}>Clear</div>
+          <div style={{ fontSize: '8px', opacity: 0.8 }}>All</div>
         </button>
       </div>
 
+      {/* Saved Circuits Section */}
       {showSaved && savedCircuits.length > 0 && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '0',
-            left: '120px',
-            backgroundColor: 'white',
-            border: '1px solid #ddd',
-            borderRadius: '8px',
-            padding: '12px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            minWidth: '250px',
-            maxHeight: '300px',
-            overflow: 'auto',
-          }}
-        >
+        <div style={{
+          position: 'absolute',
+          top: '170px',
+          left: '0px',
+          width: '205px',
+          backgroundColor: '#1e293b',
+          border: '1px solid #334155',
+          borderRadius: '6px',
+          padding: '6px',
+          maxHeight: '120px',
+          overflow: 'auto'
+        }}>
           <div style={{ 
-            fontWeight: 'bold', 
-            marginBottom: '8px', 
-            borderBottom: '1px solid #eee',
-            paddingBottom: '4px'
+            fontSize: '9px',
+            fontWeight: '700', 
+            color: '#f8fafc',
+            marginBottom: '4px',
+            borderBottom: '1px solid #334155',
+            paddingBottom: '2px'
           }}>
-            Saved Circuits
+            Saved Circuits ({savedCircuits.length})
           </div>
+          
           {savedCircuits.map(circuit => (
             <div
               key={circuit.id}
               style={{
-                padding: '8px',
-                borderBottom: '1px solid #f0f0f0',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                padding: '3px',
+                borderBottom: '1px solid #334155',
+                marginBottom: '2px'
               }}
             >
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 'bold', fontSize: '14px' }}>{circuit.name}</div>
-                <div style={{ fontSize: '11px', color: '#666' }}>
-                  {new Date(circuit.createdAt).toLocaleDateString()}
-                </div>
-                <div style={{ fontSize: '11px', color: '#666' }}>
-                  {circuit.nodes.length} nodes, {circuit.edges.length} connections
-                </div>
+              <div style={{ 
+                fontWeight: '600', 
+                fontSize: '8px', 
+                color: '#f8fafc',
+                marginBottom: '1px'
+              }}>
+                {circuit.name}
               </div>
-              <div style={{ display: 'flex', gap: '4px' }}>
+              <div style={{ 
+                fontSize: '7px', 
+                color: '#94a3b8',
+                marginBottom: '2px'
+              }}>
+                {circuit.nodes.length} nodes, {circuit.edges.length} connections
+              </div>
+              
+              <div style={{ display: 'flex', gap: '2px' }}>
                 <button
                   onClick={() => loadCircuit(circuit)}
                   style={{
-                    padding: '4px 8px',
-                    backgroundColor: '#4CAF50',
+                    padding: '1px 4px',
+                    backgroundColor: '#22c55e',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '4px',
+                    borderRadius: '2px',
                     cursor: 'pointer',
-                    fontSize: '11px',
+                    fontSize: '7px',
+                    fontWeight: '600'
                   }}
                 >
                   Load
@@ -277,13 +368,14 @@ const CircuitManager = () => {
                 <button
                   onClick={() => deleteCircuit(circuit.id)}
                   style={{
-                    padding: '4px 8px',
-                    backgroundColor: '#f44336',
+                    padding: '1px 4px',
+                    backgroundColor: '#ef4444',
                     color: 'white',
                     border: 'none',
-                    borderRadius: '4px',
+                    borderRadius: '2px',
                     cursor: 'pointer',
-                    fontSize: '11px',
+                    fontSize: '7px',
+                    fontWeight: '600'
                   }}
                 >
                   Delete

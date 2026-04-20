@@ -382,163 +382,448 @@ const PremiumBottomPanel = () => {
   return (
     <div
       style={{
-        height: isCollapsed ? '56px' : '280px',
-        backgroundColor: currentTheme.surface,
-        borderTop: `1px solid ${currentTheme.border}`,
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        height: isCollapsed ? '64px' : '320px',
+        background: `linear-gradient(180deg, ${currentTheme.surface}, ${currentTheme.surfaceHover})`,
+        borderTop: `3px solid ${currentTheme.primary}40`,
+        borderLeft: `1px solid ${currentTheme.border}30`,
+        borderRight: `1px solid ${currentTheme.border}30`,
+        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
-        boxShadow: `0 -4px 16px ${currentTheme.shadow.md}`,
-        backdropFilter: 'blur(8px)',
-        WebkitBackdropFilter: 'blur(8px)',
+        boxShadow: `0 -8px 32px ${currentTheme.shadow.xl}, inset 0 1px 0 rgba(255,255,255,0.1)`,
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        overflow: 'hidden',
       }}
     >
-      {/* Collapse/Expand Toggle */}
-      <button
-        onClick={() => setIsCollapsed(!isCollapsed)}
+      {/* Classical Header */}
+      <div
         style={{
           height: '56px',
-          background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.primaryHover})`,
-          color: 'white',
-          border: 'none',
-          cursor: 'pointer',
+          background: `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.secondary})`,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: isCollapsed ? 'center' : 'space-between',
-          padding: isCollapsed ? '0' : '0 24px',
-          fontSize: '14px',
-          fontWeight: '600',
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: `0 2px 8px ${currentTheme.primary}40`,
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.background = `linear-gradient(135deg, ${currentTheme.primaryHover}, ${currentTheme.primary})`;
-          e.target.style.transform = 'translateY(-2px)';
-          e.target.style.boxShadow = `0 4px 16px ${currentTheme.primary}60`;
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.background = `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.primaryHover})`;
-          e.target.style.transform = 'translateY(0)';
-          e.target.style.boxShadow = `0 2px 8px ${currentTheme.primary}40`;
+          justifyContent: 'space-between',
+          padding: '0 20px',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <span style={{ 
-          fontSize: '18px', 
-          fontWeight: '700',
-          textShadow: '0 1px 2px rgba(0,0,0,0.3)',
-        }}>
-          {isCollapsed ? 'S' : 'Simulation'}
-        </span>
-        {!isCollapsed && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ 
-              fontSize: '11px', 
-              opacity: 0.9,
-              fontWeight: '500',
-              letterSpacing: '0.02em',
-            }}>
-              Press to collapse
-            </span>
-            <span style={{ fontSize: '16px', opacity: 0.7 }}>»</span>
-          </div>
-        )}
-      </button>
-
-      {/* Tab Content */}
-      {!isCollapsed && (
-        <>
-          {/* Tab Navigation */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div
             style={{
+              width: '32px',
+              height: '32px',
+              background: 'rgba(255,255,255,0.2)',
+              borderRadius: '8px',
               display: 'flex',
-              borderBottom: `1px solid ${currentTheme.border}`,
-              padding: '8px 16px',
-              gap: '8px',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '16px',
+              fontWeight: '700',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
             }}
           >
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                style={{
-                  flex: 1,
-                  padding: '12px 8px',
-                  backgroundColor: activeTab === tab.id ? currentTheme.primary : 'transparent',
-                  color: activeTab === tab.id ? 'white' : currentTheme.text.secondary,
-                  border: `1px solid ${activeTab === tab.id ? currentTheme.primary : 'transparent'}`,
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  fontSize: '12px',
-                  fontWeight: '600',
-                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '4px',
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
-                onMouseEnter={(e) => {
-                  if (activeTab !== tab.id) {
-                    e.target.style.backgroundColor = currentTheme.surfaceHover;
-                    e.target.style.borderColor = currentTheme.borderLight;
-                    e.target.style.color = currentTheme.text.primary;
-                    e.target.style.transform = 'translateY(-2px)';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (activeTab !== tab.id) {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = 'transparent';
-                    e.target.style.color = currentTheme.text.secondary;
-                    e.target.style.transform = 'translateY(0)';
-                  }
-                }}
-              >
-                {activeTab === tab.id && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: '2px',
-                      background: `linear-gradient(90deg, ${currentTheme.primaryHover}, ${currentTheme.secondary})`,
-                      animation: 'pulse 2s infinite',
-                    }}
-                  />
-                )}
-                <span style={{ 
-                  fontSize: '16px', 
-                  fontWeight: '700',
-                  textShadow: activeTab === tab.id ? '0 1px 2px rgba(0,0,0,0.3)' : 'none',
-                }}>
-                  {tab.icon}
-                </span>
-                <span style={{ 
-                  fontSize: '10px', 
-                  lineHeight: '1.2',
-                  letterSpacing: '0.04em',
-                  fontWeight: '500',
-                }}>
-                  {tab.label}
-                </span>
-              </button>
-            ))}
+            🎭
           </div>
+          <div>
+            <div style={{ fontSize: '16px', fontWeight: '700', color: 'white' }}>Classical Console</div>
+            <div style={{ fontSize: '10px', color: 'rgba(255,255,255,0.8)' }}>Premium Simulation & Analysis</div>
+          </div>
+        </div>
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          style={{
+            width: '32px',
+            height: '32px',
+            background: 'rgba(255,255,255,0.2)',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '14px',
+            color: 'white',
+            transition: 'all 0.2s',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.background = 'rgba(255,255,255,0.3)';
+            e.target.style.transform = 'scale(1.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.background = 'rgba(255,255,255,0.2)';
+            e.target.style.transform = 'scale(1)';
+          }}
+        >
+          {isCollapsed ? '↑' : '↓'}
+        </button>
+      </div>
 
-          {/* Tab Content */}
+      {/* Classical Tab Navigation */}
+      {!isCollapsed && (
+        <div
+          style={{
+            display: 'flex',
+            borderBottom: `2px solid ${currentTheme.primary}20`,
+            padding: '12px 20px',
+            gap: '8px',
+            background: `${currentTheme.surface}50`,
+          }}
+        >
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              style={{
+                flex: 1,
+                height: '40px',
+                background: activeTab === tab.id 
+                  ? `linear-gradient(135deg, ${currentTheme.primary}, ${currentTheme.primaryHover})`
+                  : 'transparent',
+                color: activeTab === tab.id ? 'white' : currentTheme.text.secondary,
+                border: activeTab === tab.id 
+                  ? `2px solid ${currentTheme.primary}60` 
+                  : `2px solid ${currentTheme.border}40`,
+                borderRadius: '12px',
+                cursor: 'pointer',
+                fontSize: '12px',
+                fontWeight: '700',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px',
+                position: 'relative',
+                overflow: 'hidden',
+                boxShadow: activeTab === tab.id 
+                  ? `0 4px 16px ${currentTheme.primary}40, inset 0 1px 0 rgba(255,255,255,0.2)`
+                  : `0 2px 8px ${currentTheme.shadow.sm}`,
+              }}
+              onMouseEnter={(e) => {
+                if (activeTab !== tab.id) {
+                  e.target.style.background = `${currentTheme.primary}15`;
+                  e.target.style.borderColor = currentTheme.primary;
+                  e.target.style.color = currentTheme.text.primary;
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = `0 6px 20px ${currentTheme.shadow.md}`;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (activeTab !== tab.id) {
+                  e.target.style.background = 'transparent';
+                  e.target.style.borderColor = `${currentTheme.border}40`;
+                  e.target.style.color = currentTheme.text.secondary;
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = `0 2px 8px ${currentTheme.shadow.sm}`;
+                }
+              }}
+            >
+              {activeTab === tab.id && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: `linear-gradient(90deg, ${currentTheme.secondary}, ${currentTheme.accent})`,
+                    animation: 'pulse 2s infinite',
+                  }}
+                />
+              )}
+              <span style={{ 
+                fontSize: '16px', 
+                fontWeight: '700', 
+                textShadow: activeTab === tab.id ? '0 1px 2px rgba(0,0,0,0.3)' : 'none',
+              }}>
+                {tab.icon}
+              </span>
+              <span style={{ 
+                fontSize: '10px', 
+                lineHeight: '1.2',
+                letterSpacing: '0.04em',
+                fontWeight: '600',
+                textTransform: 'uppercase',
+              }}>
+                {tab.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Classical Content Area */}
+      {!isCollapsed && (
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            overflow: 'hidden',
+            background: `${currentTheme.background}30`,
+          }}
+        >
+          {/* Main Content */}
           <div
             style={{
               flex: 1,
-              overflow: 'hidden',
-              animation: 'fadeIn 0.3s ease-out',
+              padding: '20px',
+              overflow: 'auto',
+              animation: 'fadeIn 0.4s ease-out',
             }}
           >
             {getTabContent()}
           </div>
-        </>
+          
+          {/* Classical Side Panel */}
+          <div
+            style={{
+              width: '200px',
+              background: `${currentTheme.surface}60`,
+              borderLeft: `2px solid ${currentTheme.primary}20`,
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '16px',
+            }}
+          >
+            {/* Circuit Status */}
+            <div>
+              <div style={{ 
+                fontSize: '10px', 
+                fontWeight: '700', 
+                color: currentTheme.text.secondary,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '8px',
+              }}>
+                Circuit Status
+              </div>
+              <div style={{
+                background: `${currentTheme.primary}10`,
+                border: `2px solid ${currentTheme.primary}30`,
+                borderRadius: '12px',
+                padding: '12px',
+              }}>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: '1fr 1fr', 
+                  gap: '8px',
+                  marginBottom: '8px',
+                }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ 
+                      fontSize: '18px', 
+                      fontWeight: '700', 
+                      color: currentTheme.primary,
+                      textShadow: `0 1px 2px ${currentTheme.primary}30`,
+                    }}>
+                      {nodes.length}
+                    </div>
+                    <div style={{ 
+                      fontSize: '8px', 
+                      color: currentTheme.text.secondary,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.02em',
+                    }}>
+                      Gates
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ 
+                      fontSize: '18px', 
+                      fontWeight: '700', 
+                      color: currentTheme.secondary,
+                      textShadow: `0 1px 2px ${currentTheme.secondary}30`,
+                    }}>
+                      {edges.length}
+                    </div>
+                    <div style={{ 
+                      fontSize: '8px', 
+                      color: currentTheme.text.secondary,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.02em',
+                    }}>
+                      Wires
+                    </div>
+                  </div>
+                </div>
+                <div style={{ 
+                  textAlign: 'center',
+                  padding: '8px',
+                  background: `${currentTheme.success}20`,
+                  borderRadius: '8px',
+                  border: `1px solid ${currentTheme.success}40`,
+                }}>
+                  <div style={{ 
+                    fontSize: '12px', 
+                    fontWeight: '600',
+                    color: currentTheme.success,
+                  }}>
+                    {nodes.filter(n => n.data.value).length} Active
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Controls */}
+            <div>
+              <div style={{ 
+                fontSize: '10px', 
+                fontWeight: '700', 
+                color: currentTheme.text.secondary,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '8px',
+              }}>
+                Quick Controls
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <button
+                  onClick={handleRun}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    background: `linear-gradient(135deg, ${currentTheme.success}, ${currentTheme.successHover})`,
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: `0 2px 8px ${currentTheme.success}40`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = `0 4px 16px ${currentTheme.success}60`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = `0 2px 8px ${currentTheme.success}40`;
+                  }}
+                >
+                  <span>▶</span>
+                  <span>Run</span>
+                </button>
+                <button
+                  onClick={handleStep}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    background: `linear-gradient(135deg, ${currentTheme.secondary}, ${currentTheme.secondaryHover})`,
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: `0 2px 8px ${currentTheme.secondary}40`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = `0 4px 16px ${currentTheme.secondary}60`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = `0 2px 8px ${currentTheme.secondary}40`;
+                  }}
+                >
+                  <span>⏭</span>
+                  <span>Step</span>
+                </button>
+                <button
+                  onClick={handleReset}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    background: `linear-gradient(135deg, ${currentTheme.accent}, ${currentTheme.accentHover})`,
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: `0 2px 8px ${currentTheme.accent}40`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = `0 4px 16px ${currentTheme.accent}60`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = `0 2px 8px ${currentTheme.accent}40`;
+                  }}
+                >
+                  <span>↺</span>
+                  <span>Reset</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Performance Indicator */}
+            <div>
+              <div style={{ 
+                fontSize: '10px', 
+                fontWeight: '700', 
+                color: currentTheme.text.secondary,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: '8px',
+              }}>
+                Performance
+              </div>
+              <div style={{
+                background: `${currentTheme.surface}80`,
+                border: `2px solid ${currentTheme.border}40`,
+                borderRadius: '12px',
+                padding: '12px',
+                textAlign: 'center',
+              }}>
+                <div style={{ 
+                  width: '12px', 
+                  height: '12px', 
+                  borderRadius: '50%',
+                  background: currentTheme.success,
+                  boxShadow: `0 0 12px ${currentTheme.success}`,
+                  margin: '0 auto 8px',
+                  animation: 'pulse 2s infinite',
+                }} />
+                <div style={{ 
+                  fontSize: '10px', 
+                  fontWeight: '600',
+                  color: currentTheme.success,
+                }}>
+                  Optimal
+                </div>
+                <div style={{ 
+                  fontSize: '8px', 
+                  color: currentTheme.text.secondary,
+                  marginTop: '4px',
+                }}>
+                  {nodes.length > 10 ? 'Heavy Load' : nodes.length > 5 ? 'Medium Load' : 'Light Load'}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

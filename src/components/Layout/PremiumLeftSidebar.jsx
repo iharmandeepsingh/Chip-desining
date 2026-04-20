@@ -5,17 +5,21 @@ import CircuitTemplates from '../CircuitTemplates';
 import AICircuitGenerator from '../AICircuitGenerator';
 import CircuitManager from '../CircuitManager';
 import CircuitExport from '../CircuitExport';
+import VerilogConverter from '../VerilogConverter';
+import ArchitecturalModeler from '../ArchitecturalModeler';
 
 const PremiumLeftSidebar = () => {
   const { currentTheme } = useTheme();
   const { clearCircuit } = useCircuitStore();
   const [activeTab, setActiveTab] = useState('templates');
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const tabs = [
     { id: 'templates', label: 'Templates', icon: 'T', description: 'Pre-built circuits' },
     { id: 'ai', label: 'AI', icon: 'AI', description: 'Generate circuits' },
     { id: 'files', label: 'Files', icon: 'F', description: 'Save & Load' },
+    { id: 'verilog', label: 'Verilog', icon: 'V', description: 'Convert code' },
+    { id: 'architectural', label: 'Architectural', icon: 'A', description: 'High-level design' },
     { id: 'export', label: 'Export', icon: 'E', description: 'Export options' },
   ];
 
@@ -27,6 +31,10 @@ const PremiumLeftSidebar = () => {
         return <AICircuitGenerator />;
       case 'files':
         return <CircuitManager />;
+      case 'verilog':
+        return <VerilogConverter />;
+      case 'architectural':
+        return <ArchitecturalModeler />;
       case 'export':
         return <CircuitExport />;
       default:
@@ -47,6 +55,8 @@ const PremiumLeftSidebar = () => {
         boxShadow: `2px 0 12px ${currentTheme.shadow.md}`,
         backdropFilter: 'blur(8px)',
         WebkitBackdropFilter: 'blur(8px)',
+        position: 'relative',
+        zIndex: 1000,
       }}
     >
       {/* Collapse/Expand Toggle */}
@@ -189,14 +199,14 @@ const PremiumLeftSidebar = () => {
           style={{
             flex: 1,
             overflow: 'auto',
-            padding: '16px',
+            padding: '8px 12px',
             minHeight: 0,
           }}
         >
           <div
             style={{
-              marginBottom: '16px',
-              paddingBottom: '12px',
+              marginBottom: '8px',
+              paddingBottom: '8px',
               borderBottom: `1px solid ${currentTheme.border}`,
             }}
           >

@@ -14,14 +14,14 @@ const PremiumMainLayout = () => {
     <div
       style={{
         height: '100vh',
-        width: '100vw',
+        width: '85%',
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: currentTheme.background,
         color: currentTheme.text.primary,
         fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         overflow: 'hidden',
-        position: 'relative',
+        position: 'absolute',
         fontSize: '14px',
         lineHeight: '1.5',
         letterSpacing: '-0.01em',
