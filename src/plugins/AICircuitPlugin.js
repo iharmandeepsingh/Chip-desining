@@ -198,26 +198,36 @@ const AICircuitPlugin = {
 
     // Generate circuit from parsed description
     generateCircuit: (description) => {
-      const parsed = this.parseDescription(description);
+      console.log('AI generating circuit for:', description);
+      const parsed = AICircuitPlugin.simulationEngine.parseDescription(description);
+      console.log('Parsed circuit:', parsed);
       
-      // Convert to ReactFlow format
-      const nodes = parsed.nodes.map((node, index) => ({
-        id: `node_${Date.now()}_${index}`,
-        type: 'gate',
-        position: node.position,
-        data: {
-          label: node.type,
-          value: node.type === 'INPUT' ? false : false,
-          ...node.data
-        }
-      }));
+      // Create node mapping for proper edge connections
+      const nodeMap = {};
+      const nodes = parsed.nodes.map((node, index) => {
+        const nodeId = `node_${Date.now()}_${index}`;
+        nodeMap[node.label] = nodeId;
+        return {
+          id: nodeId,
+          type: 'gate',
+          position: node.position,
+          data: {
+            label: node.type,
+            value: node.type === 'INPUT' ? false : false,
+            ...node.data
+          }
+        };
+      });
 
       const edges = parsed.edges.map((edge, index) => ({
         id: `edge_${Date.now()}_${index}`,
-        source: edge.source,
-        target: edge.target,
+        source: nodeMap[edge.source] || edge.source,
+        target: nodeMap[edge.target] || edge.target,
         type: 'animated'
       }));
+      
+      console.log('Generated nodes:', nodes);
+      console.log('Generated edges:', edges);
 
       return {
         name: parsed.name,
@@ -225,8 +235,8 @@ const AICircuitPlugin = {
         type: parsed.type,
         nodes,
         edges,
-        confidence: this.calculateConfidence(description, parsed),
-        suggestions: this.generateSuggestions(description, parsed)
+        confidence: AICircuitPlugin.simulationEngine.calculateConfidence(description, parsed),
+        suggestions: AICircuitPlugin.simulationEngine.generateSuggestions(description, parsed)
       };
     },
 
