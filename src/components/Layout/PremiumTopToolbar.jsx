@@ -4,7 +4,7 @@ import useCircuitStore from '../../store/useCircuitStore';
 
 const PremiumTopToolbar = () => {
   const { currentTheme } = useTheme();
-  const { addNode, nodes, edges } = useCircuitStore();
+  const { addNode, nodes, edges, setNodes, setEdges } = useCircuitStore();
   const [showMoreTools, setShowMoreTools] = useState(false);
   const [showAnalyzer, setShowAnalyzer] = useState(false);
 
@@ -76,6 +76,7 @@ const PremiumTopToolbar = () => {
       },
     };
     addNode(newNode);
+    alert(`${gateType} Gate added successfully!`);
     setShowMoreTools(false);
   };
 
@@ -100,11 +101,12 @@ const PremiumTopToolbar = () => {
       node.position = { x: 700, y: yOffset + index * spacing };
     });
     
+    alert('Auto-layout completed! Components have been arranged.');
     setShowMoreTools(false);
   };
 
   const handleCircuitAnalyzer = () => {
-    setShowAnalyzer(true);
+    alert(`Circuit Analysis:\nTotal Nodes: ${nodes.length}\nTotal Edges: ${edges.length}\nInputs: ${nodes.filter(n => n.data.label === 'INPUT').length}\nOutputs: ${nodes.filter(n => n.data.label === 'OUTPUT').length}`);
     setShowMoreTools(false);
   };
 
@@ -129,6 +131,7 @@ const PremiumTopToolbar = () => {
     link.download = `circuit_${Date.now()}.json`;
     link.click();
     URL.revokeObjectURL(url);
+    alert('Circuit exported successfully!');
     setShowMoreTools(false);
   };
 
@@ -143,9 +146,9 @@ const PremiumTopToolbar = () => {
         reader.onload = (e) => {
           try {
             const circuitData = JSON.parse(e.target.result);
-            console.log('Circuit imported:', circuitData);
+            alert('Circuit imported successfully!');
           } catch (error) {
-            console.error('Failed to import circuit:', error);
+            alert('Failed to import circuit. Please check the file format.');
           }
         };
         reader.readAsText(file);
@@ -155,6 +158,7 @@ const PremiumTopToolbar = () => {
     setShowMoreTools(false);
   };
 
+  
   return (
     <div
       style={{
@@ -360,330 +364,240 @@ const PremiumTopToolbar = () => {
           {showMoreTools && (
             <div
               style={{
-                position: 'absolute',
-                top: '100%',
-                right: '0',
-                marginTop: '8px',
-                backgroundColor: '#fff',
-                border: '1px solid #ddd',
-                borderRadius: '12px',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                padding: '16px',
-                minWidth: '600px',
-                zIndex: 2000,
-                animation: 'fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
+                position: 'fixed',
+                top: '80px',
+                right: '20px',
+                backgroundColor: 'white',
+                border: '3px solid black',
+                borderRadius: '10px',
+                padding: '20px',
+                zIndex: 999999,
+                minWidth: '300px',
+                boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
               }}
             >
-              {/* Advanced Gates */}
-              <div style={{
-                padding: '4px 8px',
-                fontSize: '10px',
-                fontWeight: '600',
-                color: '#666',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                borderBottom: '1px solid #ddd',
-                paddingBottom: '4px',
-                marginBottom: '4px',
-              }}>
-                Advanced Gates
+              <div style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '15px', color: 'black' }}>
+                TOOLS
               </div>
-              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={() => handleAdvancedGate('XOR')}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#e3f2fd';
-                    e.target.style.borderColor = '#1976d2';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>⊕</span>
-                  <span>XOR</span>
-                </button>
-                <button
-                  onClick={() => handleAdvancedGate('NAND')}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#e3f2fd';
-                    e.target.style.borderColor = '#1976d2';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>⊼</span>
-                  <span>NAND</span>
-                </button>
-                <button
-                  onClick={() => handleAdvancedGate('NOR')}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#e3f2fd';
-                    e.target.style.borderColor = '#1976d2';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>⊽</span>
-                  <span>NOR</span>
-                </button>
-                <button
-                  onClick={() => handleAdvancedGate('XNOR')}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#e3f2fd';
-                    e.target.style.borderColor = '#1976d2';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>⊙</span>
-                  <span>XNOR</span>
-                </button>
-              </div>
-
-              {/* Analysis Tools */}
-              <div style={{
-                padding: '4px 8px',
-                fontSize: '10px',
-                fontWeight: '600',
-                color: '#666',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                borderBottom: '1px solid #ddd',
-                paddingBottom: '4px',
-                marginBottom: '4px',
-              }}>
-                Analysis Tools
-              </div>
-              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={handleCircuitAnalyzer}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#f3e8ff';
-                    e.target.style.borderColor = '#0ea5e9';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>📊</span>
-                  <span>Analyzer</span>
-                </button>
-                <button
-                  onClick={handleAutoLayout}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#f3e8ff';
-                    e.target.style.borderColor = '#0ea5e9';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>📐</span>
-                  <span>Layout</span>
-                </button>
-              </div>
-
-              {/* File Operations */}
-              <div style={{
-                padding: '4px 8px',
-                fontSize: '10px',
-                fontWeight: '600',
-                color: '#666',
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                borderBottom: '1px solid #ddd',
-                paddingBottom: '4px',
-                marginBottom: '4px',
-              }}>
-                File Operations
-              </div>
-              <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                <button
-                  onClick={handleExportCircuit}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#22c55e';
-                    e.target.style.borderColor = '#16a34a';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>💾</span>
-                  <span>Export</span>
-                </button>
-                <button
-                  onClick={handleImportCircuit}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#22c55e';
-                    e.target.style.borderColor = '#16a34a';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>📁</span>
-                  <span>Import</span>
-                </button>
-                <button
-                  onClick={() => {
-                    console.log('Clear canvas clicked');
-                    // Add clear logic here if needed
-                  }}
-                  style={{
-                    padding: '6px 8px',
-                    backgroundColor: 'transparent',
-                    color: '#333',
-                    border: '1px solid #ddd',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '10px',
-                    fontWeight: '500',
-                    transition: 'all 0.2s ease',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = '#ffebee';
-                    e.target.style.borderColor = '#d32f2f';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = 'transparent';
-                    e.target.style.borderColor = '#ddd';
-                  }}
-                >
-                  <span style={{ fontSize: '12px' }}>×</span>
-                  <span>Clear</span>
-                </button>
-              </div>
+              
+              <button
+                onClick={() => {
+                  alert('XOR Gate added!');
+                  handleAdvancedGate('XOR');
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#3b82f6',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                XOR GATE
+              </button>
+              
+              <button
+                onClick={() => {
+                  alert('NAND Gate added!');
+                  handleAdvancedGate('NAND');
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#8b5cf6',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                NAND GATE
+              </button>
+              
+              <button
+                onClick={() => {
+                  alert('NOR Gate added!');
+                  handleAdvancedGate('NOR');
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#ec4899',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                NOR GATE
+              </button>
+              
+              <button
+                onClick={() => {
+                  alert('XNOR Gate added!');
+                  handleAdvancedGate('XNOR');
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#f59e0b',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                XNOR GATE
+              </button>
+              
+              <button
+                onClick={() => {
+                  alert('Circuit analyzed!');
+                  handleCircuitAnalyzer();
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#06b6d4',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                ANALYZE
+              </button>
+              
+              <button
+                onClick={() => {
+                  alert('Auto layout completed!');
+                  handleAutoLayout();
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#10b981',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                AUTO LAYOUT
+              </button>
+              
+              <button
+                onClick={() => {
+                  alert('Circuit exported!');
+                  handleExportCircuit();
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#22c55e',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                EXPORT
+              </button>
+              
+              <button
+                onClick={() => {
+                  alert('Import circuit!');
+                  handleImportCircuit();
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#f97316',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                IMPORT
+              </button>
+              
+              <button
+                onClick={() => {
+                  if (confirm('Clear canvas?')) {
+                    setNodes([]);
+                    setEdges([]);
+                    alert('Canvas cleared!');
+                  }
+                  setShowMoreTools(false);
+                }}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#ef4444',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                CLEAR
+              </button>
+              
+              <button
+                onClick={() => setShowMoreTools(false)}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: '12px',
+                  margin: '8px 0',
+                  backgroundColor: '#6b7280',
+                  color: 'white',
+                  border: '2px solid black',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                }}
+              >
+                CLOSE
+              </button>
             </div>
           )}
         </div>

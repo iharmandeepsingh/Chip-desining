@@ -80,7 +80,7 @@ const PremiumMainLayout = () => {
       }}
     >
       {/* Top Toolbar */}
-      <div style={{ position: 'relative', zIndex: 100 }}>
+      <div style={{ position: 'relative', zIndex: 1000 }}>
         <PremiumTopToolbar />
       </div>
 
@@ -89,7 +89,7 @@ const PremiumMainLayout = () => {
         style={{
           flex: 1,
           display: 'flex',
-          overflow: 'hidden',
+          overflow: 'auto',
           position: 'relative',
           margin: '0',
           padding: '0',
