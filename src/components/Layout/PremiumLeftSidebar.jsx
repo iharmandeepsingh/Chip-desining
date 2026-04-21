@@ -84,6 +84,18 @@ const PremiumLeftSidebar = () => {
 
         return <ArchitecturalModeler />;
 
+      case 'simulation':
+
+        return <SimulationEngine />;
+
+      case 'library':
+
+        return <StandardCellLibrary_v2 />;
+
+      case 'verification':
+
+        return <DRCVerification />;
+
       case 'export':
 
         return <CircuitExport />;
