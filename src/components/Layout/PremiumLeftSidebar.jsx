@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useTheme } from '../../contexts/ThemeContext';
 
@@ -7,6 +7,8 @@ import useCircuitStore from '../../store/useCircuitStore';
 import CircuitTemplates from '../CircuitTemplates';
 
 import AICircuitGenerator from '../AICircuitGenerator';
+
+import AdvancedAICircuitGenerator from '../AdvancedAICircuitGenerator';
 
 import CircuitManager from '../CircuitManager';
 
@@ -22,6 +24,8 @@ import StandardCellLibrary_v2 from '../StandardCellLibrary_v2';
 
 import DRCVerification from '../DRCVerification';
 
+import ACDCPanel from '../ACDCPanel';
+
 
 
 const PremiumLeftSidebar = () => {
@@ -34,6 +38,20 @@ const PremiumLeftSidebar = () => {
 
   const [isCollapsed, setIsCollapsed] = useState(true);
 
+  // Listen for Advanced AI tab switch event
+  useEffect(() => {
+    const handleSwitchToAdvancedAI = () => {
+      setActiveTab('advanced-ai');
+      setIsCollapsed(false);
+    };
+
+    window.addEventListener('switchToAdvancedAI', handleSwitchToAdvancedAI);
+    
+    return () => {
+      window.removeEventListener('switchToAdvancedAI', handleSwitchToAdvancedAI);
+    };
+  }, [setActiveTab, setIsCollapsed]);
+
 
 
   const tabs = [
@@ -41,6 +59,10 @@ const PremiumLeftSidebar = () => {
     { id: 'templates', label: 'Templates', icon: 'T', description: 'Pre-built circuits' },
 
     { id: 'ai', label: 'AI', icon: 'AI', description: 'Generate circuits' },
+
+    { id: 'advanced-ai', label: 'Advanced AI', icon: '🧠', description: 'ML-enhanced generation' },
+
+    { id: 'acdc', label: 'AC/DC', icon: '⚡', description: 'AC/DC components' },
 
     { id: 'files', label: 'Files', icon: 'F', description: 'Save & Load' },
 
@@ -73,6 +95,10 @@ const PremiumLeftSidebar = () => {
 
         return <AICircuitGenerator />;
 
+      case 'advanced-ai':
+
+        return <AdvancedAICircuitGenerator />;
+
       case 'files':
 
         return <CircuitManager />;
@@ -101,6 +127,10 @@ const PremiumLeftSidebar = () => {
 
         return <CircuitExport />;
 
+      case 'acdc':
+
+        return <ACDCPanel />;
+
       default:
 
         return <CircuitTemplates />;
@@ -119,7 +149,7 @@ const PremiumLeftSidebar = () => {
 
         height: '100%',
 
-        width: isCollapsed ? '56px' : '280px',
+        width: isCollapsed ? '56px' : '400px',
 
         backgroundColor: currentTheme.surface,
 

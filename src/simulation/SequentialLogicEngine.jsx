@@ -10,15 +10,37 @@ class SequentialLogicEngine {
     this.timeStep = 0.1; // 0.1ns time step
     this.pendingEvents = [];
     this.processedEvents = new Set();
+    
+    // AC/DC Signal Support
+    this.signalTypes = new Map(); // 'AC' or 'DC' for each node
+    this.acSignals = new Map(); // Store AC waveforms
+    this.dcSignals = new Map(); // Store DC values
+    this.frequencies = new Map(); // AC frequencies in Hz
+    this.amplitudes = new Map(); // AC amplitudes
+    this.phases = new Map(); // AC phases
+    this.signalMode = 'mixed'; // 'ac', 'dc', or 'mixed'
   }
 
   // Initialize component timing specifications
   initializeComponent(node) {
-    const { type, setupTime, holdTime, propagationDelay, accessTime, memorySize } = node.data;
+    const { type, setupTime, holdTime, propagationDelay, accessTime, memorySize, signalType, frequency, amplitude } = node.data;
     
     this.propagationDelays.set(node.id, propagationDelay || 5);
     this.setupTimes.set(node.id, setupTime || 2);
     this.holdTimes.set(node.id, holdTime || 1);
+    
+    // Initialize AC/DC signal properties
+    const nodeSignalType = signalType || this.detectSignalType(node);
+    this.signalTypes.set(node.id, nodeSignalType);
+    
+    if (nodeSignalType === 'AC') {
+      this.frequencies.set(node.id, frequency || 50); // Default 50Hz
+      this.amplitudes.set(node.id, amplitude || 5); // Default 5V
+      this.phases.set(node.id, 0); // Default 0 phase
+      this.acSignals.set(node.id, { frequency: frequency || 50, amplitude: amplitude || 5, phase: 0 });
+    } else {
+      this.dcSignals.set(node.id, 0); // Default 0V DC
+    }
     
     if (memorySize) {
       this.memoryBlocks.set(node.id, new Array(memorySize).fill(0));
@@ -34,17 +56,121 @@ class SequentialLogicEngine {
     }
   }
 
+  // Detect signal type based on component characteristics
+  detectSignalType(node) {
+    const { type, category } = node.data;
+    
+    // Power electronics typically use AC
+    if (category === 'power' || type.includes('TRANSFORMER') || type.includes('MOTOR')) {
+      return 'AC';
+    }
+    
+    // Digital logic typically uses DC
+    if (type.includes('LOGIC') || type.includes('GATE') || type.includes('FLIP_FLOP')) {
+      return 'DC';
+    }
+    
+    // Mixed signal components
+    if (type.includes('ADC') || type.includes('DAC') || type.includes('COMPARATOR')) {
+      return 'MIXED';
+    }
+    
+    return 'DC'; // Default to DC
+  }
+
+  // Calculate AC signal value at given time
+  calculateACSignal(nodeId, time) {
+    const frequency = this.frequencies.get(nodeId) || 50;
+    const amplitude = this.amplitudes.get(nodeId) || 5;
+    const phase = this.phases.get(nodeId) || 0;
+    
+    return amplitude * Math.sin(2 * Math.PI * frequency * time / 1000 + phase);
+  }
+
+  // Convert AC to DC (rectification)
+  convertACToDC(nodeId, acValue) {
+    return Math.abs(acValue); // Simple rectification
+  }
+
+  // Convert DC to AC (inversion)
+  convertDCToAC(nodeId, dcValue, frequency = 50) {
+    return {
+      frequency,
+      amplitude: dcValue,
+      phase: 0,
+      value: dcValue // DC component
+    };
+  }
+
+  // Get signal value considering AC/DC
+  getSignalValue(nodeId, time) {
+    const signalType = this.signalTypes.get(nodeId);
+    
+    switch (signalType) {
+      case 'AC':
+        return this.calculateACSignal(nodeId, time);
+      case 'DC':
+        return this.dcSignals.get(nodeId) || 0;
+      case 'MIXED':
+        const acValue = this.calculateACSignal(nodeId, time);
+        const dcValue = this.dcSignals.get(nodeId) || 0;
+        return acValue + dcValue;
+      default:
+        return 0;
+    }
+  }
+
   // Clock signal management
-  updateClockSignal(clockNodeId, value) {
+  updateClockSignal(clockNodeId, value, signalType = null) {
     const previousValue = this.clockSignals.get(clockNodeId) || false;
-    this.clockSignals.set(clockNodeId, value);
+    const nodeSignalType = signalType || this.signalTypes.get(clockNodeId) || 'DC';
     
-    // Detect clock edges
-    const edge = previousValue === false && value === true ? 'rising' : 
-                 previousValue === true && value === false ? 'falling' : 'none';
+    // Handle AC clock signals
+    if (nodeSignalType === 'AC') {
+      const frequency = this.frequencies.get(clockNodeId) || 50;
+      const amplitude = this.amplitudes.get(clockNodeId) || 5;
+      const phase = this.phases.get(clockNodeId) || 0;
+      
+      // Calculate AC clock value at current time
+      const acValue = amplitude * Math.sin(2 * Math.PI * frequency * this.currentTime / 1000 + phase);
+      this.clockSignals.set(clockNodeId, acValue);
+      
+      // Detect zero-crossings as edges for AC
+      const edge = (previousValue <= 0 && acValue > 0) ? 'rising' : 
+                   (previousValue >= 0 && acValue < 0) ? 'falling' : 'none';
+      
+      if (edge !== 'none') {
+        this.scheduleClockEdgeEvent(clockNodeId, edge, this.currentTime);
+      }
+    } else {
+      // Handle DC clock signals
+      this.clockSignals.set(clockNodeId, value);
+      
+      // Detect clock edges for DC
+      const edge = previousValue === false && value === true ? 'rising' : 
+                   previousValue === true && value === false ? 'falling' : 'none';
+      
+      if (edge !== 'none') {
+        this.scheduleClockEdgeEvent(clockNodeId, edge, this.currentTime);
+      }
+    }
+  }
+
+  // Set signal type for a node
+  setSignalType(nodeId, signalType, properties = {}) {
+    this.signalTypes.set(nodeId, signalType);
     
-    if (edge !== 'none') {
-      this.scheduleClockEdgeEvent(clockNodeId, edge, this.currentTime);
+    if (signalType === 'AC') {
+      this.frequencies.set(nodeId, properties.frequency || 50);
+      this.amplitudes.set(nodeId, properties.amplitude || 5);
+      this.phases.set(nodeId, properties.phase || 0);
+      this.acSignals.set(nodeId, {
+        frequency: properties.frequency || 50,
+        amplitude: properties.amplitude || 5,
+        phase: properties.phase || 0
+      });
+    } else if (signalType === 'DC') {
+      this.dcSignals.set(nodeId, properties.value || 0);
     }
   }
 
@@ -74,8 +200,52 @@ class SequentialLogicEngine {
   // Process sequential logic components
   processSequentialNode(node, inputs, timestamp) {
     const { type, currentState, memory } = node.data;
+    const signalType = this.signalTypes.get(node.id);
     
     switch (type) {
+      // AC Components
+      case 'AC_VOLTAGE_SOURCE':
+        return this.processACVoltageSource(node, inputs, timestamp);
+      
+      case 'TRANSFORMER':
+        return this.processTransformer(node, inputs, timestamp);
+      
+      case 'AC_MOTOR':
+        return this.processACMotor(node, inputs, timestamp);
+      
+      // DC Components
+      case 'DC_VOLTAGE_SOURCE':
+        return this.processDCVoltageSource(node, inputs, timestamp);
+      
+      case 'DC_MOTOR':
+        return this.processDCMotor(node, inputs, timestamp);
+      
+      // Converter Components
+      case 'RECTIFIER':
+        return this.processRectifier(node, inputs, timestamp);
+      
+      case 'INVERTER':
+        return this.processInverter(node, inputs, timestamp);
+      
+      case 'ADC':
+        return this.processADC(node, inputs, timestamp);
+      
+      case 'DAC':
+        return this.processDAC(node, inputs, timestamp);
+      
+      case 'COMPARATOR':
+        return this.processComparator(node, inputs, timestamp);
+      
+      // Digital Logic (DC)
+      case 'AND_GATE':
+      case 'OR_GATE':
+      case 'NOT_GATE':
+      case 'XOR_GATE':
+      case 'NAND_GATE':
+      case 'NOR_GATE':
+        return this.processLogicGate(node, inputs, timestamp);
+      
+      // Sequential Logic (DC)
       case 'T_FLIP_FLOP':
         return this.processTFlipFlop(node, inputs, timestamp);
       
@@ -84,6 +254,9 @@ class SequentialLogicEngine {
       
       case 'JK_FLIP_FLOP_EN':
         return this.processJKFlipFlopEnable(node, inputs, timestamp);
+      
+      case 'D_FLIP_FLOP':
+        return this.processDFlipFlop(node, inputs, timestamp);
       
       case 'RAM_8BIT':
       case 'ROM_16BIT':
